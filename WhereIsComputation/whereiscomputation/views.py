@@ -8,8 +8,8 @@ from .models import (
     MyModel,
     )
 
-@view_config(route_name='home', renderer='templates/mytemplate.pt')
-def my_view(request):
+@view_config(route_name='index', renderer='templates/index.jinja2')
+def index(request):
     try:
         one = DBSession.query(MyModel).filter(MyModel.name=='one').first()
     except DBAPIError:
@@ -32,3 +32,30 @@ After you fix the problem, please restart the Pyramid application to
 try it again.
 """
 
+@view_config(route_name='precomputed', renderer="templates/stub.jinja2")
+def precomputed(request):
+    return {}
+
+
+@view_config(route_name='serverside', renderer="templates/stub.jinja2")
+def serverside(request):
+    return {}
+
+
+@view_config(route_name='serverside-with-cache', renderer="templates/stub.jinja2")
+def serverside_with_cache(request):
+    return {}
+
+
+@view_config(route_name='clientside', renderer="templates/stub.jinja2")
+def clientside(request):
+    return {}
+
+
+@view_config(route_name='server-and-clientside', renderer="templates/stub.jinja2")
+def server_and_clientside(request):
+    return {}
+
+@view_config(route_name='database-layer', renderer="templates/stub.jinja2")
+def database_layer(request):
+    return {}

@@ -1,3 +1,6 @@
 env
 *~
 *.pyc
+*.egg-info
+*.sqlite
+.idea
