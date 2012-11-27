@@ -28,4 +28,3 @@ def main(global_config, **settings):
 
     config.scan()
     return config.make_wsgi_app()
-
