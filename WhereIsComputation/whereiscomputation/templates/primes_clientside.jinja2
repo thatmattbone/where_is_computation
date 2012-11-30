@@ -1,0 +1,13 @@
+{% extends "primes.jinja2" %}
+
+{% block extrahead %}
+    <script type="text/javascript" src="{{ 'whereiscomputation:static/js/sieve.js'|static_url }}"></script>
+{% endblock %}
+
+{% block content %}
+    {{ super() }}
+
+    <script type="text/javascript">
+        document.getElementById("primes").innerHTML = sieve(541).join(", ");
+    </script>
+{% endblock %}

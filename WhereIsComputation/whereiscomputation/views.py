@@ -50,7 +50,7 @@ def serverside_with_cache(request):
     return {'name': 'Primes computed on the server-side with a caching layer'}
 
 
-@view_config(route_name='clientside', renderer="templates/primes.jinja2")
+@view_config(route_name='clientside', renderer="templates/primes_clientside.jinja2")
 def clientside(request):
     return {'name': 'Primes computed on the client-side'}
 
