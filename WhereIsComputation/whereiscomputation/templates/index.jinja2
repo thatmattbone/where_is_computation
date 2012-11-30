@@ -1,5 +1,17 @@
 {% extends "base.jinja2" %}
 
 {% block content %}
-<h1>Hello World</h1>
+    <h1>Where to put the computation?</h1>
+    <p>
+        Described in <a href="#">my blog post</a>, this is an exploration of where computation can end up in web
+        applications. The example task is to display the first 100 prime numbers. This can be done by:
+    </p>
+    <ul>
+        <li><a href="{{ 'precomputed'|route_url() }}">Precomputing the answer</a></li>
+        <li><a href="{{ 'serverside'|route_url() }}">Computing primes on the server-side</a></li>
+        <li><a href="{{ 'serverside-with-cache'|route_url() }}">Computing primes on the server-side with a caching layer</a></li>
+        <li><a href="{{ 'clientside'|route_url() }}">Computing primes on the client-side</a></li>
+        <li><a href="{{ 'server-and-clientside'|route_url() }}">Computing primes on both the client and server-side</a></li>
+        <li><a href="{{ 'database-layer'|route_url() }}">Computing primes in the database layer</a></li>
+    </ul>
 {% endblock %}
