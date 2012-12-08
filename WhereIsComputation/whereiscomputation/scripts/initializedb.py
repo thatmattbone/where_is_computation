@@ -23,16 +23,23 @@ def usage(argv):
     sys.exit(1)
 
 my_one_function = """
-CREATE OR REPLACE FUNCTION my_one()
-  RETURNS integer AS
-$BODY$
-one = 1
-return one
-$BODY$
+CREATE OR REPLACE FUNCTION prime_sieve(max_n integer)
+  RETURNS integer[] AS
+  $$
+  number_map = {n: 0 for n in range(2, max_n + 1)}
+
+  for n in number_map.keys():
+      current_n = n + n
+      while current_n < max_n:
+          number_map[current_n] += 1
+          current_n += n
+
+  return [n for n, count in number_map.items() if count == 0]
+  $$
   LANGUAGE plpythonu VOLATILE
   COST 100;
--- ALTER FUNCTION my_one()
---   OWNER TO whereiscomputation;
+ALTER FUNCTION prime_sieve(integer)
+  OWNER TO whereiscomputation;
 """
 
 def main(argv=sys.argv):

@@ -2,6 +2,7 @@ from pyramid.response import Response
 from pyramid.view import view_config
 
 from sqlalchemy.exc import DBAPIError
+from sqlalchemy import select, func
 
 from .models import (
     DBSession,
@@ -62,4 +63,7 @@ def server_and_clientside(request):
 
 @view_config(route_name='database-layer', renderer="templates/primes.jinja2")
 def database_layer(request):
-    return {'name': 'Primes computed in the database layer'}
+    session = DBSession()
+    primes = session.execute(select([func.prime_sieve(ONE_HUNDRED_PRIMES[-1])])).fetchall()[0][0]
+    return {'name': 'Primes computed in the database layer',
+            'primes': ", ".join([str(prime) for prime in primes])}
