@@ -10,11 +10,7 @@ from pyramid.paster import (
     setup_logging,
     )
 
-from ..models import (
-    DBSession,
-    MyModel,
-    Base,
-    )
+from ..models import DBSession
 
 def usage(argv):
     cmd = os.path.basename(argv[0])
@@ -58,8 +54,3 @@ def main(argv=sys.argv):
     conn.execute(my_one_function)
     mark_changed(session)
     transaction.commit()
-
-    #with transaction.manager:
-    #    model = MyModel(name='one', value=1)
-    #    DBSession.add(model)
-    #    import pdb; pdb.set_trace()

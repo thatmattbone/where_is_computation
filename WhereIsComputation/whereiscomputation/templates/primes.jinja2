@@ -1,8 +1,8 @@
 {% extends "base.jinja2" %}
 
-{% block content %}
-    <h1>{{ name }}</h1>
+{% block header %}{{ name }}{% endblock %}
 
+{% block content %}
     <p id="primes">
         {{ primes }}
     </p>

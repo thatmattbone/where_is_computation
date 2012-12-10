@@ -24,8 +24,10 @@ int main(void) {
   
   sieve(100, primes);
   
-  for(int i=0; i<max_n; i++) {
-    printf("%i, ", primes[i]);  
+  for(int i=2; i<max_n; i++) {
+    if(primes[i] == 0) {
+      printf("%i, ", i);
+    }
   }
   printf("\n");
   
