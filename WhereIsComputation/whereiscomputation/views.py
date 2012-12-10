@@ -27,9 +27,10 @@ def clientside(request):
     return {'name': 'Primes computed on the client-side'}
 
 
-@view_config(route_name='server-and-clientside', renderer="templates/primes.jinja2")
+@view_config(route_name='server-and-clientside', renderer="templates/primes_clientside.jinja2")
 def server_and_clientside(request):
-    return {'name': 'Primes computed on the client and server-side'}
+    return {'name': 'Primes computed on the client and server-side',
+            'primes': ", ".join([str(prime) for prime in sieve(100)])}
 
 
 @view_config(route_name='database-layer', renderer="templates/primes.jinja2")
