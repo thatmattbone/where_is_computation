@@ -2,3 +2,4 @@ pyramid==1.4b1
 jinja2==2.6
 pyramid_jinja2==1.5
 psycopg2==2.4.5
+redis==2.7.2
