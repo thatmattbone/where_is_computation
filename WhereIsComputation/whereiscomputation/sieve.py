@@ -21,6 +21,31 @@ def sieve(max_n):
     return [n for n, count in number_map.items() if count == 0]
 
 
+sieve_lua = """\
+local max_n = tonumber(ARGV[1])
+local number_map = {}
+for n = 2, max_n + 1 do
+   number_map[n] = 0
+end
+
+for n, value in pairs(number_map) do
+   local current_n = n + n
+   while current_n < max_n do
+      number_map[current_n] = number_map[current_n] + 1
+      current_n = current_n + n
+   end
+end
+
+local primes = {}
+for n, value in pairs(number_map) do
+   if value == 0 then
+      table.insert(primes, n)
+   end
+end
+return primes
+"""
+
+
 ONE_HUNDRED_PRIMES = [
     2,
     3,
@@ -124,3 +149,4 @@ ONE_HUNDRED_PRIMES = [
     541,
     ]
 ONE_HUNDRED_PRIME_STRINGS = [str(prime) for prime in ONE_HUNDRED_PRIMES]
+LAST_PRIME = ONE_HUNDRED_PRIMES[-1]

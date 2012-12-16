@@ -20,6 +20,8 @@ def main(global_config, **settings):
     config.add_route('clientside', '/clientside')
     config.add_route('server-and-clientside', 'server-and-clientside')
     config.add_route('database-layer', '/database-layer')
+    config.add_route('redis-script', '/redis-script')
+    config.add_route('redis-compiled', '/redis-compiled')
 
     config.scan()
     return config.make_wsgi_app()

@@ -25,6 +25,6 @@ class TestMyView(unittest.TestCase):
 
 
 class TestSieve(unittest.TestCase):
-    def test_100_primes(self):
 
+    def test_100_primes(self):
         self.assertEqual(ONE_HUNDRED_PRIMES, sieve(541))
