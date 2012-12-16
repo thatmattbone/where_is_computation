@@ -1,0 +1,120 @@
+diff --git a/src/Makefile b/src/Makefile
+index 204a271..0fb3f37 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -99,7 +99,7 @@ endif
+ 
+ REDIS_SERVER_NAME= redis-server
+ REDIS_SENTINEL_NAME= redis-sentinel
+-REDIS_SERVER_OBJ= adlist.o ae.o anet.o dict.o redis.o sds.o zmalloc.o lzf_c.o lzf_d.o pqsort.o zipmap.o sha1.o ziplist.o release.o networking.o util.o object.o db.o replication.o rdb.o t_string.o t_list.o t_set.o t_zset.o t_hash.o config.o aof.o pubsub.o multi.o debug.o sort.o intset.o syncio.o migrate.o endianconv.o slowlog.o scripting.o bio.o rio.o rand.o memtest.o crc64.o bitops.o sentinel.o
++REDIS_SERVER_OBJ= adlist.o ae.o anet.o dict.o redis.o sds.o zmalloc.o lzf_c.o lzf_d.o pqsort.o zipmap.o sha1.o ziplist.o release.o networking.o util.o object.o db.o replication.o rdb.o t_string.o t_list.o t_set.o t_zset.o t_hash.o config.o aof.o pubsub.o multi.o debug.o sort.o intset.o syncio.o migrate.o endianconv.o slowlog.o scripting.o bio.o rio.o rand.o memtest.o crc64.o bitops.o sentinel.o sieve.o
+ REDIS_CLI_NAME= redis-cli
+ REDIS_CLI_OBJ= anet.o sds.o adlist.o redis-cli.o zmalloc.o release.o anet.o ae.o
+ REDIS_BENCHMARK_NAME= redis-benchmark
+diff --git a/src/Makefile.dep b/src/Makefile.dep
+index 5331189..7d51610 100644
+--- a/src/Makefile.dep
++++ b/src/Makefile.dep
+@@ -57,7 +57,7 @@ redis-cli.o: redis-cli.c fmacros.h version.h ../deps/hiredis/hiredis.h \
+ redis.o: redis.c redis.h fmacros.h config.h ../deps/lua/src/lua.h \
+   ../deps/lua/src/luaconf.h ae.h sds.h dict.h adlist.h zmalloc.h anet.h \
+   ziplist.h intset.h version.h util.h rdb.h rio.h slowlog.h bio.h \
+-  asciilogo.h
++  asciilogo.h sieve.h
+ release.o: release.c release.h
+ replication.o: replication.c redis.h fmacros.h config.h \
+   ../deps/lua/src/lua.h ../deps/lua/src/luaconf.h ae.h sds.h dict.h \
+@@ -69,6 +69,7 @@ scripting.o: scripting.c redis.h fmacros.h config.h ../deps/lua/src/lua.h \
+   ziplist.h intset.h version.h util.h rdb.h rio.h sha1.h rand.h \
+   ../deps/lua/src/lauxlib.h ../deps/lua/src/lua.h \
+   ../deps/lua/src/lualib.h
++sieve.o: 
+ sds.o: sds.c sds.h zmalloc.h
+ sha1.o: sha1.c sha1.h config.h
+ slowlog.o: slowlog.c redis.h fmacros.h config.h ../deps/lua/src/lua.h \
+diff --git a/src/redis.c b/src/redis.c
+index eb4418e..78ec33b 100644
+--- a/src/redis.c
++++ b/src/redis.c
+@@ -30,6 +30,7 @@
+ #include "redis.h"
+ #include "slowlog.h"
+ #include "bio.h"
++#include "sieve.h"
+ 
+ #include <time.h>
+ #include <signal.h>
+@@ -250,7 +251,8 @@ struct redisCommand redisCommandTable[] = {
+     {"script",scriptCommand,-2,"ras",0,NULL,0,0,0,0,0},
+     {"time",timeCommand,1,"rR",0,NULL,0,0,0,0,0},
+     {"bitop",bitopCommand,-4,"wm",0,NULL,2,-1,1,0,0},
+-    {"bitcount",bitcountCommand,-2,"r",0,NULL,1,1,1,0,0}
++    {"bitcount",bitcountCommand,-2,"r",0,NULL,1,1,1,0,0},
++    {"primes",primesCommand,2,"r",0,NULL,0,0,0,0,0},
+ };
+ 
+ /*============================ Utility functions ============================ */
+diff --git a/src/sieve.c b/src/sieve.c
+new file mode 100644
+index 0000000..4588810
+--- /dev/null
++++ b/src/sieve.c
+@@ -0,0 +1,48 @@
++#include "redis.h"
++#include "sieve.h"
++#include <assert.h>
++
++
++void sieve(long max_n, short primes[MAX_PRIME]) {
++	short zero = 0;
++	memset(primes, zero, MAX_PRIME);
++
++	for(int n=2; n<max_n; n++) {
++		int current_n = n + n;
++		while(current_n < max_n) {
++			primes[current_n] = 1;
++			current_n += n;
++		}
++	}
++}
++
++
++void primesCommand(redisClient *c) {
++	long max_n, reply_len=0;
++	short primes[MAX_PRIME];
++
++	if(getLongFromObjectOrReply(c, c->argv[1], &max_n, NULL) != REDIS_OK) return;
++
++    redisLog(REDIS_VERBOSE, "inside primesCommand()");
++
++	assert(max_n < MAX_PRIME);
++
++	sieve(max_n, primes);
++
++	for(int i=2; i <= max_n; i++) {
++		if(primes[i] == 0) {
++			reply_len++;
++		}
++	}
++
++    addReplyMultiBulkLen(c, reply_len);
++    int j = 0;
++	for(int i=2; i <= max_n; i++) {
++		if(primes[i] == 0) {
++			addReplyBulkLongLong(c, i);
++			j++;
++            redisLog(REDIS_VERBOSE, "prime %i", i);
++		}
++	}
++    redisLog(REDIS_VERBOSE, "primesCommand() done. first prime"); 
++}
+diff --git a/src/sieve.h b/src/sieve.h
+new file mode 100644
+index 0000000..6303927
+--- /dev/null
++++ b/src/sieve.h
+@@ -0,0 +1,4 @@
++#define MAX_PRIME 100000
++
++void sieve(long max_n, short primes[MAX_PRIME]);
++void primesCommand(redisClient *c);

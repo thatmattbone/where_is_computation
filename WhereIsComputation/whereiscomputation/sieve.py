@@ -24,7 +24,7 @@ def sieve(max_n):
 sieve_lua = """\
 local max_n = tonumber(ARGV[1])
 local number_map = {}
-for n = 2, max_n + 1 do
+for n = 2, max_n do
    number_map[n] = 0
 end
 
