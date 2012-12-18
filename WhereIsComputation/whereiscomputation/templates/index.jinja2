@@ -4,16 +4,20 @@
 
 {% block content %}
     <p>
-        Described in <a href="#">my blog post</a>, this is an exploration of where computation can end up in web
-        applications. The example task is to display the first 100 prime numbers. This can be done by:
+        Described in <a href="#">my blog post</a>, this is an exploration of the
+        many layers and technologies that can be used in a web application to
+        perform the same task. The example task is displaying the first 100 
+        prime numbers using the 
+        <a href="http://en.wikipedia.org/wiki/Sieve_of_Eratosthenes">sieve of
+        Eratosthenes</a>. This can be done with:
     </p>
     <ul>
-        <li><a href="{{ 'precomputed'|route_url() }}">Precomputing the answer</a></li>
-        <li><a href="{{ 'serverside'|route_url() }}">Computing primes on the server-side</a></li>
-        <li><a href="{{ 'clientside'|route_url() }}">Computing primes on the client-side</a></li>
-        <li><a href="{{ 'server-and-clientside'|route_url() }}">Computing primes on both the client and server-side</a></li>
-        <li><a href="{{ 'database-layer'|route_url() }}">Computing primes in the database layer</a></li>
-        <li><a href="{{ 'redis-script'|route_url() }}">Computing primes with a Redis script</a></li>
-        <li><a href="{{ 'redis-compiled'|route_url() }}">Computing primes with a custom Redis command</a></li>
+        <li><a href="{{ 'precomputed'|route_url() }}">Precomputed primes</a></li>
+        <li><a href="{{ 'clientside'|route_url() }}">Primes computed on the client-side</a></li>        
+        <li><a href="{{ 'serverside'|route_url() }}">Primes computed on the server-side</a></li>
+        <li><a href="{{ 'server-and-clientside'|route_url() }}">Primes computed on the client and server-side</a></li>
+        <li><a href="{{ 'database-layer'|route_url() }}">Primes computed in Postgres</a></li>
+        <li><a href="{{ 'redis-script'|route_url() }}">Primes computed with a Redis script</a></li>
+        <li><a href="{{ 'redis-compiled'|route_url() }}">Primes computed with a custom Redis command</a></li>
     </ul>
 {% endblock %}

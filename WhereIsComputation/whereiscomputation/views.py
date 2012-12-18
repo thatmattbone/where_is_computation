@@ -5,7 +5,8 @@ from sqlalchemy import select, func
 import redis
 
 from .models import DBSession
-from .sieve import sieve, sieve_lua, ONE_HUNDRED_PRIMES, ONE_HUNDRED_PRIME_STRINGS, LAST_PRIME
+from .sieve import sieve, sieve_lua, ONE_HUNDRED_PRIME_STRINGS, LAST_PRIME
+
 
 def redis_connection():
     r = redis.StrictRedis(host='localhost', port=6379, db=0)
@@ -17,10 +18,9 @@ def index(request):
     return {}
 
 
-@view_config(route_name='precomputed', renderer="templates/primes.jinja2")
+@view_config(route_name='precomputed', renderer="templates/precomputed.jinja2")
 def precomputed(request):
-    return {'name': 'Precomputed Primes',
-            'primes': ", ".join(ONE_HUNDRED_PRIME_STRINGS)}
+    return {'name': 'Precomputed Primes'}
 
 
 @view_config(route_name='serverside', renderer="templates/primes.jinja2")
@@ -44,7 +44,7 @@ def server_and_clientside(request):
 def database_layer(request):
     session = DBSession()
     primes = session.execute(select([func.prime_sieve(LAST_PRIME)])).fetchall()[0][0]
-    return {'name': 'Primes computed in the database layer',
+    return {'name': 'Primes computed in Postgres',
             'primes': ", ".join([str(prime) for prime in primes])}
 
 
