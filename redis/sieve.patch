@@ -56,7 +56,7 @@ index eb4418e..78ec33b 100644
  /*============================ Utility functions ============================ */
 diff --git a/src/sieve.c b/src/sieve.c
 new file mode 100644
-index 0000000..4588810
+index 0000000..351b8dd
 --- /dev/null
 +++ b/src/sieve.c
 @@ -0,0 +1,48 @@
@@ -71,7 +71,7 @@ index 0000000..4588810
 +
 +	for(int n=2; n<max_n; n++) {
 +		int current_n = n + n;
-+		while(current_n < max_n) {
++		while(current_n <= max_n) {
 +			primes[current_n] = 1;
 +			current_n += n;
 +		}
