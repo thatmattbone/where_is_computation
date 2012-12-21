@@ -16,7 +16,7 @@ function sieve(maxN) {
 
     for(n=2; n <= maxN; n++) {
         var currentN = n + n;
-        while(currentN < maxN) {
+        while(currentN <= maxN) {
             numberMap[currentN] += 1;
             currentN += n;
         }

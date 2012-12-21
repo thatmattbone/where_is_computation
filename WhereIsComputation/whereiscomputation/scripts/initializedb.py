@@ -11,6 +11,7 @@ from pyramid.paster import (
     )
 
 from ..models import DBSession
+from ..sieve import postgres_prime_sieve_function
 
 def usage(argv):
     cmd = os.path.basename(argv[0])
@@ -18,25 +19,6 @@ def usage(argv):
           '(example: "%s development.ini")' % (cmd, cmd)) 
     sys.exit(1)
 
-my_one_function = """
-CREATE OR REPLACE FUNCTION prime_sieve(max_n integer)
-  RETURNS integer[] AS
-  $$
-  number_map = {n: 0 for n in range(2, max_n + 1)}
-
-  for n in number_map.keys():
-      current_n = n + n
-      while current_n < max_n:
-          number_map[current_n] += 1
-          current_n += n
-
-  return [n for n, count in number_map.items() if count == 0]
-  $$
-  LANGUAGE plpythonu VOLATILE
-  COST 100;
-ALTER FUNCTION prime_sieve(integer)
-  OWNER TO whereiscomputation;
-"""
 
 def main(argv=sys.argv):
     if len(argv) != 2:
@@ -51,6 +33,6 @@ def main(argv=sys.argv):
 
     session = DBSession()
     conn = session.connection()
-    conn.execute(my_one_function)
+    conn.execute(postgres_prime_sieve_function)
     mark_changed(session)
     transaction.commit()
