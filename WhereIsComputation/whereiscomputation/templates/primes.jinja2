@@ -2,6 +2,15 @@
 
 {% block header %}{{ name }}{% endblock %}
 
+{% block info %}
+   <p>
+       {{ docstring|safe }}
+   </p>
+   <p>
+      <a class="btn btn-success" href="{{ code_url }}">see the code</a>
+   </p>
+{% endblock %}
+
 {% block content %}
     <p id="primes">
         {{ primes }}
